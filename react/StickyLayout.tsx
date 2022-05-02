@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import ReactResizeDetector from 'react-resize-detector'
 import { useCssHandles, applyModifiers } from 'vtex.css-handles'
-
+import { useRuntime } from 'vtex.render-runtime'
 import { useStickyScroll } from './modules/useStickyScroll'
 import { StackContext } from './StackContainer'
 import { Positions } from './types'
@@ -89,10 +89,27 @@ const StickyLayoutComponent: FC<Props> = ({
     .filter(Boolean)
     .join(' ')
 
-  const wrapperClassname = isStuck
+  let wrapperClassname = isStuck
     ? applyModifiers(handles.wrapper, ['stuck'])
     : handles.wrapper
+    const { page } = useRuntime()
+    switch (page){
+      case "store.search#department":
+      case "store.search#category":
+      case "store.search#subcategory":
+      case "store.search#brand":
+      case "store.home":
+      case "store.custom#Corporative-with-images":
+      case "store.custom#contact-us":
+      case "store.custom#about-us":
+        wrapperClassname= applyModifiers(wrapperClassname, ['transparent'])
+        break
+      default: 
+        wrapperClassname= applyModifiers(wrapperClassname, ['solid']);
+        break;
 
+    }
+  
   const containerStyle: CSSProperties = {
     [position]: isStuck ? verticalSpacing + stickOffset : 0,
     zIndex,
